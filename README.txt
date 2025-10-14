@@ -1,12 +1,11 @@
 ########################### common ###########################
 
 compiler for the esoteric programming language with the same
-name, an esoteric programming language in which everything is 
-a comment.
+name, a programming language in which everything is a comment!
 
-_________________
-| Features 	|
------------------
+_______________
+| Features    |
+---------------
 - can parse comments from lots of programming languages!
 - flags!!!
 - compiles to .com files in record speed :)
