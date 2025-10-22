@@ -9,7 +9,6 @@ import CXXParserModule;
 
 export module FlagParserModule;
 
-// this "class" solely exist, so common works on windows too (getopt does not work on windows)
 // checks if all flags that are set have been set correctly (e.g. -o needs an argument)
 export namespace FlagParser // wanted to try a pattern that works well with cxx modules here
 {

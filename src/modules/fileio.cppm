@@ -3,62 +3,50 @@ module;
 #include <filesystem>
 #include <fstream>
 #include <print>
+#include <utility>
 
 export module FileIOModule;
 
 export class FileIO final
 {
 public:
-    explicit FileIO(const std::string &filename)
-        : m_filename(filename),
-          m_file(filename)
+    explicit FileIO(std::string filename) : m_filename(std::move(filename))
     {
-        if (m_file.good())
-        {
-            try
-            {
-                m_file.open(m_filename);
-            }
-            catch (std::filesystem::filesystem_error const &e)
-            {
-                //std::println(e.what());
-            }
-        }
     };
 
-    ~FileIO()
-    {
-        m_file.close();
-    };
+    ~FileIO() = default;
 
     // read into the internal buffer
-    void read()
+    [[nodiscard]] bool read()
     {
-        if (m_file.is_open())
-        {
-            // read file
-        }
+        std::ifstream file(m_filename);
+        if (!file)
+            return false;
+
+        m_content.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+        return true;
     };
 
     // write the internal buffer to a file
-    void write()
+    [[nodiscard]] bool write() const
     {
-        if (m_file.is_open())
-        {
-            if (not m_out_filename.empty())
-            {
-                // write to out_filename
-            }
-            else
-            {
-                // write to m_filename
-            }
-        }
+        std::ofstream file(m_out_filename.empty() ? m_filename : m_out_filename);
+        if (!file)
+            return false;
+
+        file.write(m_content.data(), m_content.size());
+
+        return true;
     };
 
     void set_out_filename(const std::string &out_filename)
     {
         m_out_filename = out_filename;
+    }
+
+    void set_filename(const std::string &filename)
+    {
+        m_filename = filename;
     }
 
     void set_content(const std::string &content)
@@ -75,5 +63,4 @@ private:
     std::string m_filename;
     std::string m_out_filename;
     std::string m_content;
-    std::ifstream m_file;
 };

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include <print>
 
@@ -6,7 +5,7 @@
 import FileIOModule;
 import FlagParserModule;
 
-int main(int argc, char **argv)
+int main(const int argc, char *argv[])
 {
     std::vector<std::string> _v_arg(argv, argv + argc);
 
@@ -21,13 +20,23 @@ int main(int argc, char **argv)
 
     // parse file content
     FileIO file(_v_arg.at(1));
-    file.read();
+    if (!file.read())
+    {
+        std::println("Error: couldn't read file: {}", _v_arg.at(1));
+        return EXIT_FAILURE;
+    }
 
     // parse with parser flags
     if (!FlagParser::m_output.empty())
         file.set_out_filename(FlagParser::m_output);
 
-    file.write();
+    if (!file.write())
+    {
+        std::println("Error: couldn't write file: {}", FlagParser::m_output);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 
 
