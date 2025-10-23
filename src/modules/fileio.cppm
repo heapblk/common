@@ -54,7 +54,7 @@ public:
         m_content = content;
     }
 
-    std::string get_content() const
+    [[nodiscard]] std::string get_content() const
     {
         return m_content;
     }

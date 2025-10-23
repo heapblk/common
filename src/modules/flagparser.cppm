@@ -4,10 +4,10 @@ module;
 #include <string>
 #include <print>
 
+export module FlagParserModule;
+
 import IParserModule;
 import CXXParserModule;
-
-export module FlagParserModule;
 
 // checks if all flags that are set have been set correctly (e.g. -o needs an argument)
 export namespace FlagParser // wanted to try a pattern that works well with cxx modules here

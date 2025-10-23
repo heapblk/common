@@ -1,7 +1,6 @@
 #include <vector>
 #include <print>
 
-// import Parser;
 import FileIOModule;
 import FlagParserModule;
 
@@ -11,14 +10,9 @@ int main(const int argc, char *argv[])
 
     // check if we have any possible flags
     if (_v_arg.size() >= 2)
-    {
         if (!FlagParser::parse(_v_arg))
-        {
             return EXIT_FAILURE;
-        }
-    }
 
-    // parse file content
     FileIO file(_v_arg.at(1));
     if (!file.read())
     {
@@ -26,7 +20,11 @@ int main(const int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    // parse with parser flags
+    if (!FlagParser::m_parser->parse(file.get_content()))
+        return EXIT_FAILURE;
+
+    file.set_content(FlagParser::m_parser->get_content());
+
     if (!FlagParser::m_output.empty())
         file.set_out_filename(FlagParser::m_output);
 

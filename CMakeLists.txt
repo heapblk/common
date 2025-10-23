@@ -15,7 +15,7 @@ target_sources(common
         FILE_SET CXX_MODULES FILES
         "src/modules/flagparser.cppm"
         "src/modules/iparser.cppm"
-        "src/modules/cxx_parser.cppm"
+        "src/modules/parsers/cxx_parser.cppm"
         "src/modules/fileio.cppm"
 )
 
