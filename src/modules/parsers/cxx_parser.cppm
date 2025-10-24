@@ -14,26 +14,34 @@ public:
     ~CXXParser() override = default;
 
     // parses the file content by the rules of the CXX parser
-    [[nodiscard]] bool parse(std::string content) override
+    [[nodiscard]] bool parse(std::string buffer) override
     {
-        m_content = "THIS WAS COMPILED WITH COMMON\n" + std::move(content);
+        m_buffer = "THIS WAS COMPILED WITH COMMON\n" + std::move(buffer);
         bool success = true;
 
-        // check for block comments
-        if (m_content.at(0) != '/' && m_content.at(1) != '*' && !m_content.ends_with("*/"))
+        // check for block comments at the beginning and end of the buffer
+        if (m_buffer.at(0) != '/' && m_buffer.at(1) != '*' && !m_buffer.ends_with("*/"))
         {
             std::println("Error: CXXParser: could not parse file: failed at block comment check");
-            success = false;
+            return success;
         }
 
         return success;
     };
 
-    [[nodiscard]] std::string get_content() override
+    // returns internal buffer
+    [[nodiscard]] std::string get_buffer() override
     {
-        return m_content;
+        return m_buffer;
     }
 
 private:
-    std::string m_content;
+    bool parse_line_comment(std::string buffer)
+    {
+        bool success = true;
+
+        return success;
+    }
+
+    std::string m_buffer;
 };

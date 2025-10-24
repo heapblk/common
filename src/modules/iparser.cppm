@@ -18,6 +18,6 @@ public:
     // parse the read file content by the rules of a parser
     virtual bool parse(std::string) = 0;
 
-    // get the parsed content
-    virtual std::string get_content() = 0;
+    // get internal buffer
+    virtual std::string get_buffer() = 0;
 };

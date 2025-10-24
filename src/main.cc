@@ -23,7 +23,7 @@ int main(const int argc, char *argv[])
     if (!FlagParser::m_parser->parse(file.get_content()))
         return EXIT_FAILURE;
 
-    file.set_content(FlagParser::m_parser->get_content());
+    file.set_content(FlagParser::m_parser->get_buffer());
 
     if (!FlagParser::m_output.empty())
         file.set_out_filename(FlagParser::m_output);
