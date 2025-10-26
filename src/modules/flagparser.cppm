@@ -1,8 +1,8 @@
 module;
 
-#include <vector>
-#include <string>
 #include <print>
+#include <string>
+#include <vector>
 
 export module FlagParserModule;
 
@@ -17,7 +17,7 @@ IParser *m_parser = new CXXParser(); // default is the cxx parser
 
 bool parse(std::vector<std::string> &flags)
 {
-    bool success = false;
+    bool success = true;
     // skip first two arguments, we already know that we have at least 3
     for (auto it = flags.begin() + 2; it != flags.end(); ++it)
     {
@@ -60,4 +60,4 @@ bool parse(std::vector<std::string> &flags)
     }
     return success;
 }
-}
+} // namespace FlagParser

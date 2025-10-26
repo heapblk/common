@@ -30,7 +30,7 @@ public:
     // write the internal buffer to a file
     [[nodiscard]] bool write() const
     {
-        std::ofstream file(m_out_filename.empty() ? m_filename : m_out_filename);
+        std::ofstream file(m_out_filename.empty() ? m_filename + ".com" : m_out_filename);
         if (!file)
             return false;
 
