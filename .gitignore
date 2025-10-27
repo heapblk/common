@@ -47,6 +47,3 @@ cmake-build-debug
 # IDE dirs
 .vscode
 .idea
-
-# Test dir
-test

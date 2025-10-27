@@ -8,6 +8,9 @@ module;
 #define EOL '\r\n'
 #endif
 
+#define BLOCK_COMMENT_END   "*/"
+#define LINE_COMMENT        "//"
+
 export module CXXParserModule;
 
 import IParserModule;
@@ -22,25 +25,81 @@ public:
     // parses the file content by the rules of the CXX parser
     [[nodiscard]] bool parse(std::string buffer) override
     {
-        bool success = false;
         m_buffer = std::move(buffer);
+        bool success = true;
+        bool block_comment = false;
+        size_t line_start = 0;
+        size_t line_count = 1;
 
-        if (!m_buffer.starts_with("//") && !m_buffer.starts_with("/*"))
+        while (line_start < m_buffer.size())
         {
-            std::println("Error: CXXParser: Line 1: no '/*' or '//' at the beginning of buffer");
-            return false;
+            // Find end of line
+            size_t line_end = m_buffer.find(EOL, line_start);
+            if (line_end == std::string::npos)
+                line_end = m_buffer.size();
+
+            std::string_view line(m_buffer.data() + line_start, line_end - line_start);
+            size_t i = 0;
+            bool line_has_code = false; // or anything but comments
+
+            while (i < line.size())
+            {
+                if (block_comment)
+                {
+                    size_t current_line_end = line.find(BLOCK_COMMENT_END, i);
+                    if (current_line_end == std::string_view::npos)
+                    {
+                        // rest of line is inside block comment
+                        i = line.size();
+                        break;
+                    }
+                    block_comment = false;
+                    i = current_line_end + 2; // move index beyond the found '*/'
+                }
+                else
+                {
+                    if (line[i] == '/' && i + 1 < line.size())
+                    {
+                        if (line[i + 1] == '/')
+                            break; // rest is line comment
+                        if (line[i + 1] == '*')
+                        {
+                            // start block comment
+                            block_comment = true;
+                            i += 2;
+                            continue;
+                        }
+                    }
+                    if (!std::isspace(line[i]))
+                    {
+                        line_has_code = true;
+                    }
+                    ++i;
+                }
+            }
+
+            if (line_has_code)
+            {
+                success = false;
+                std::println("Error: Line {} contains uncommented tokens", line_count);
+            }
+
+            line_start = line_end + 1;
+            ++line_count;
         }
-        else if (m_buffer.ends_with("*/" + EOL))
+
+        if (block_comment)
         {
-            success = true;
+            std::println("Error: file ends inside a non-closed block comment");
+            success = false;
         }
 
-        if (!success)
-            success = parse_internal();
-
-        // insert a nice compiler message at the top
-        std::string comp_message = "/*THIS WAS COMPILED WITH COMMON*/\n";
-        m_buffer.insert(m_buffer.begin(), comp_message.begin(), comp_message.end());
+        if (success)
+        {
+            // insert a nice compiler message at the top
+            std::string comp_message = "/*THIS WAS COMPILED WITH COMMON*/\n";
+            m_buffer.insert(m_buffer.begin(), comp_message.begin(), comp_message.end());
+        }
 
         return success;
     };
@@ -52,59 +111,5 @@ public:
     }
 
 private:
-    bool parse_internal()
-    {
-        bool success = true;
-        bool line_comment = false;
-        bool block_comment = false;
-        int count = 1;
-
-        for (auto it = m_buffer.begin(); it != m_buffer.end(); ++it)
-        {
-            auto next = std::next(it);
-
-            switch (*it)
-            {
-            case '/':
-                if (*next == '*')
-                    block_comment = true;
-                break;
-            case '*':
-                if (*next == '/')
-                {
-                    if (block_comment)
-                        block_comment = false; // block comment ends here
-                }
-                break;
-            case EOL:
-                count++;
-                if (!block_comment)
-                {
-                    line_comment = false;
-
-                    if (*next == '/' && *(next + 1) == '/')
-                        line_comment = true;
-
-                    if (next != m_buffer.end() && !line_comment)
-                    {
-                        std::println("current char: {}", *it);
-                        std::println("next char: {}", *next);
-                        std::println("nextnext char: {}", *(next + 1));
-                        std::println("Error: Line {}", count);
-                    }
-                }
-                break;
-            default:
-                if (!block_comment && !line_comment)
-                {
-                    success &= false;
-                }
-                else
-                    success &= true;
-            }
-        }
-        return success;
-    }
-
     std::string m_buffer;
 };
