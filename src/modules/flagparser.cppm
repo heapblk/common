@@ -1,5 +1,6 @@
 module;
 
+#include <cctype>
 #include <print>
 #include <string>
 #include <vector>
@@ -8,6 +9,12 @@ export module FlagParserModule;
 
 import IParserModule;
 import CXXParserModule;
+import PythonParserModule;
+
+namespace
+{
+const std::string c_parser_prefix = "--parser=";
+};
 
 // checks if all flags that are set have been set correctly (e.g. -o needs an argument)
 export namespace FlagParser // wanted to try a pattern that works well with cxx modules here
@@ -37,12 +44,21 @@ bool parse(std::vector<std::string> &flags)
                 ++it;
             }
         }
-        else if (it->contains("--parser="))
+        else if (it->contains(c_parser_prefix))
         {
-            // currently only the cxx parser is available
-            if (*it == "--parser=cxx")
+            std::string parser_name =
+                static_cast<std::string>(*it).substr(c_parser_prefix.size(), static_cast<std::string>(*it).size());
+            std::transform(parser_name.begin(), parser_name.end(), parser_name.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
+
+            if (parser_name == "cxx" || parser_name == "c")
             {
                 m_parser = new CXXParser();
+                success = true;
+            }
+            else if (parser_name == "python" || parser_name == "py")
+            {
+                m_parser = new PythonParser();
                 success = true;
             }
             else
