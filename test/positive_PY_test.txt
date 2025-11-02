@@ -1,0 +1,4 @@
+"""
+valid block comment
+"""
+# valid line commment
