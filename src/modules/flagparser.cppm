@@ -58,7 +58,7 @@ bool parse(std::vector<std::string> &flags)
             }
             else if (parser_name == "python" || parser_name == "py")
             {
-                m_parser = new PythonParser();
+                m_parser = new PythonParser('#', "\"\"\"");
                 success = true;
             }
             else
