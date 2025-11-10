@@ -12,6 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install GCC
-      run: apt-get install gcc15
+      run: sudo apt-get install gcc15
     - name: make
       run: make
