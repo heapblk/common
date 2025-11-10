@@ -12,8 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install GCC
-      uses: egor-tensin/setup-gcc@v1
-      with: 
-        version: 15
+      run: apt-get install gcc15
     - name: make
       run: make
