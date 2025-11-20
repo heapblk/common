@@ -30,13 +30,21 @@ public:
     // write the internal buffer to a file
     [[nodiscard]] bool write() const
     {
-        std::ofstream file(m_out_filename.empty() ? m_filename + ".com" : m_out_filename);
+        [[nodiscard]] bool write() const
+    {
+        std::string filename = m_out_filename.empty() ? m_filename : m_out_filename;
+
+        std::filesystem::path path(filename);
+        path.replace_extension(".com");
+
+        std::ofstream file(path.string());
         if (!file)
             return false;
 
         file.write(m_content.data(), m_content.size());
+    return true;
+}
 
-        return true;
     };
 
     void set_out_filename(const std::string &out_filename)
