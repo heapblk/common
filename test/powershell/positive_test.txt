@@ -1,0 +1,5 @@
+<#
+hi,\n
+this is common, and this should parse
+#>
+# more stuff that should parse

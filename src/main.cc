@@ -1,5 +1,5 @@
-#include <vector>
 #include <print>
+#include <vector>
 
 import FileIOModule;
 import FlagParserModule;
@@ -9,9 +9,16 @@ int main(const int argc, char *argv[])
     std::vector<std::string> _v_arg(argv, argv + argc);
 
     // check if we have any possible flags
-    if (_v_arg.size() >= 2)
+    if (_v_arg.size() > 1)
+    {
         if (!FlagParser::parse(_v_arg))
             return EXIT_FAILURE;
+    }
+    else
+    {
+        std::println("Error: No arguments were given, try '--help' or '-h' for usage info");
+        return EXIT_FAILURE;
+    }
 
     FileIO file(_v_arg.at(1));
     if (!file.read())
@@ -36,5 +43,3 @@ int main(const int argc, char *argv[])
 
     return EXIT_SUCCESS;
 }
-
-

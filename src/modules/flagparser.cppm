@@ -1,6 +1,5 @@
 module;
 
-#include <cctype>
 #include <print>
 #include <string>
 #include <vector>
@@ -10,6 +9,7 @@ export module FlagParserModule;
 import IParserModule;
 import CXXParserModule;
 import PythonParserModule;
+import PowerShellParserModule;
 
 namespace
 {
@@ -25,9 +25,44 @@ IParser *m_parser = new CXXParser(); // default is the cxx parser
 bool parse(std::vector<std::string> &flags)
 {
     bool success = true;
-    // skip first two arguments, we already know that we have at least 3
-    for (auto it = flags.begin() + 2; it != flags.end(); ++it)
+    int arg_index = 0;
+    // skip first argument, because it doesn't need to be parsed
+    for (auto it = flags.begin() + 1; it != flags.end(); ++it, arg_index++)
     {
+        if (const auto next = std::next(it); arg_index == 0 && *it == "--help" || *it == "-h")
+        {
+            std::println(R"(common - Compiler for the esoteric programming language where everything is a comment!
+
+USAGE:
+    common <input_file> [OPTIONS]
+
+ARGUMENTS:
+    <input_file>    Source file to compile (any file extension)
+
+OPTIONS:
+    -h, --help         This help message
+    -o, --output       Specify output file
+    --parser=<parser>  Comment parser to use (default: c)
+                       Available parsers:
+                         c          - C/C++ style comments (// and /* */)
+                         python     - Python style comments (#)
+                         powershell - PowerShell style comments (# and <# #>)
+
+DESCRIPTION:
+    Compiles source files written in the 'common' programming language to .com files.
+    By default, parses C-style comments (//, /* */). Output file will have the same
+    name as input with .com extension.
+
+EXAMPLES:
+    # Compile with default C/C++ style comments
+    $ common common_test.txt
+    
+    # Compile with Python style comments
+    $ common --parser=py common_python_test.txt)");
+            // this isn't best practice, but we can exit right here after the help message is printed
+            std::exit(EXIT_SUCCESS);
+        }
+
         if (*it == "-o" or *it == "--output")
         {
             if (const auto next = std::next(it); next == flags.end() or next->empty())
@@ -59,6 +94,11 @@ bool parse(std::vector<std::string> &flags)
             else if (parser_name == "python" || parser_name == "py")
             {
                 m_parser = new PythonParser('#', "\"\"\"");
+                success = true;
+            }
+            else if (parser_name == "powershell" || parser_name == "ps")
+            {
+                m_parser = new PowerShellParser('#', "<#", "#>");
                 success = true;
             }
             else
