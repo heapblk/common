@@ -17,5 +17,6 @@ target_sources(common
         "src/modules/iparser.cppm"
         "src/modules/fileio.cppm"
         "src/modules/parsers/cxx_parser.cppm"
-        "src/modules/parsers/python_parser.cpp"
+        "src/modules/parsers/python_parser.cppm"
+        "src/modules/parsers/powershell_parser.cppm"
 )

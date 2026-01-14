@@ -6,5 +6,6 @@ pkgs.mkShell {
 		gcc15
 		gnumake
 		ninja
+		cmake
 	];
 }

@@ -1,0 +1,10 @@
+# hi\n
+E this is # common and this shouldn't parse
+E Error
+error #>
+
+# #> good
+<#
+block comment
+#E #>helloworld
+<# hi
