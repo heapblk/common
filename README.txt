@@ -1,8 +1,5 @@
 ########################################### common ###################################################
 
-## WARNING ##
-currently only C-Style comments are supported
-
 compiler for the esoteric programming language with the same name, a programming language in which 
 everything is a comment!
 
